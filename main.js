@@ -27,13 +27,41 @@ document.addEventListener("DOMContentLoaded", function() {
     $("alarms-btn").addEventListener("click", function() {goScreen("alarms")})
     $("settings-btn").addEventListener("click", function() {goScreen("settings")})
     $("user-btn").addEventListener("click", function() {goScreen("user")})
+
+    $("general-btn").addEventListener("click", function() {showPopup("settings-general")});
+    let backbtns = document.getElementsByClassName("back-btn");
+    for(let obj of backbtns) {obj.addEventListener("click", function() {clearPopups()})}
+
+    $("add-reminder-btn").addEventListener("click", function() {showPopup("reminders-add")});
 })
 
 function goScreen(a) {
     if(thisScreen == a) {return}
     $("screens").style.transform = `translateX(${screens[a]}px)`;
     thisScreen = a;
+    clearPopups();
     updateScreen();
+
+    console.log("here");
+    $("home-icon").src = "./images/home.png";
+    $("alarms-icon").src = "./images/alarms.png";
+    $("reminders-icon").src = "./images/reminders.png";
+    $("settings-icon").src = "./images/settings.png";
+    $("user-icon").src = "./images/user.png";
+    console.log($("" + thisScreen + "-btn"));
+    $("" + thisScreen + "-icon").src = "./images/" + thisScreen + "-select.png";
+}
+
+function showPopup(a) {
+    let popups = document.getElementsByClassName("popup");
+    for(let obj of popups) {obj.classList.toggle("on", false)}
+    $(a).classList.toggle("on", true);
+}
+
+function clearPopups() {
+    let popups = document.getElementsByClassName("popup");
+    for(let obj of popups) {obj.classList.toggle("on", false)}
+    console.log("clear popup")
 }
 
 function updateScreen() {
