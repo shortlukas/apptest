@@ -8,22 +8,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
-    <!-- <script type="module" src="main.js"></script> -->
+    <script type="module" src="main.js"></script>
 
     
 </head>
 <body>
     <div id="frame">
-        <div id="scroll" class="screen">
-            <div class="content-box">
-                <div class="content header">
-                    <span>Alarms</span>
+        <div id="screens">
+            <div id="home" class="screen">
+                <div class="content-box">
+                    <div class="content header">
+                        <span>Alarms</span>
+                        <div class="end-container"><span style="font-size: 20px">Add</span></div>
+                    </div>
+                    <div id="home-alarms-container"></div>
                 </div>
-                <div class="content"></div>
-                <div class="content"></div>
+                <div class="content-box">
+                    <div class="content header">
+                        <span>Reminders</span>
+                        <div class="end-container"><span style="font-size: 20px">Add</span></div>
+                    </div>
+                    <div id="home-reminders-container"></div>
+                </div>
+            </div>
+            <div id="reminders" class="screen">
+                <div class="content-box">
+                    <div class="content header">
+                        <span style="font-size: 20px">Edit</span>
+                        <div class="end-container"><span style="font-size: 20px">Add</span></div>
+                    </div>
+                    <div id="reminders-container"></div>
+                </div>
+                <div class="content-box">
+                    <div class="content header">
+                        <span>Recent Reminders</span>
+                    </div>
+                    <div id="recent-reminders-container"></div>
+                </div>
+            </div>
+            <div id="alarms" class="screen">
+                <div class="content-box">
+                    <div class="content header">
+                        <span style="font-size: 20px">Edit</span>
+                        <div class="end-container"><span style="font-size: 20px">Add</span></div>
+                    </div>
+                    <div id="alarms-container"></div>
+                </div>
+                <div class="content-box">
+                    <div class="content header">
+                        <span>Recent Alarms</span>
+                    </div>
+                    <div id="recent-alarms-container"></div>
+                </div>
+            </div>
+            <div id="settings" class="screen">
+                <div class="content-box">
+                    <div class="content header">
+                        <span style="font-size: 20px">Settings</span>
+                    </div>
+                    <div class="content setting">
+                        <span>General</span>
+                        <div class="end-container"><img src="./images/right-arrow.png" class="icon-40"></div>
+                    </div>
+                    <div class="content setting">
+                        <span>Accessibility</span>
+                        <div class="end-container"><img src="./images/right-arrow.png" class="icon-40"></div>
+                    </div>
+                    <div class="content setting">
+                        <span style="flex-shrink: 0">Control Center</span>
+                        <div class="end-container"><img src="./images/right-arrow.png" class="icon-40"></div>
+                    </div>
+                    <div class="content setting">
+                        <span>Display</span>
+                        <div class="end-container"><img src="./images/right-arrow.png" class="icon-40"></div>
+                    </div>
+
+                </div>
             </div>
         </div>
-        <div id="nav"></div>
+        <div id="nav">
+            <div id="home-btn" class="nav-btn"><img src="./images/home.png"class="icon-50"></div>
+            <div id="reminders-btn" class="nav-btn"><img src="./images/reminders.png"class="icon-50"></div>
+            <div id="alarms-btn" class="nav-btn"><img src="./images/alarms.png"class="icon-50"></div>
+            <div id="settings-btn" class="nav-btn"><img src="./images/settings.png"class="icon-50"></div>
+            <div id="user-btn" class="nav-btn"><img src="./images/user.png"class="icon-50"></div>
+        </div>
     </div>
 </body>
 </html>
