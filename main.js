@@ -4,7 +4,7 @@ function $(id) {
 
 let data = {
     alarms: [{time: 2100, desc: "Study Vocab Set1,Set2,Set3", id: 1}],
-    reminders: [{time: 2100, desc: "Study Vocab Set1,Set2,Set3", id: 1, state: 0}],
+    reminders: [{time: 2100, label: "Vocab", desc: "Study Vocab Set1,Set2,Set3", id: 1, state: 0}],
     r_alarms: [],
     r_reminders: []
 }
@@ -33,6 +33,14 @@ document.addEventListener("DOMContentLoaded", function() {
     for(let obj of backbtns) {obj.addEventListener("click", function() {clearPopups()})}
 
     $("add-reminder-btn").addEventListener("click", function() {showPopup("reminders-add")});
+
+    $("alarm-toggle").addEventListener("click", function() {
+        let d = $("alarm-dropdown")
+        if(d.classList.contains("on")) {d.classList.toggle("on", false)}
+        else {d.classList.toggle("on", true)}
+    })
+
+    $("reminder-create-btn").addEventListener("click", function() {createReminder()});
 })
 
 function goScreen(a) {
@@ -108,7 +116,7 @@ function updateHomeScreen() {
         alarmtxt.innerHTML = "alarm: " + t;
         let desc = document.createElement("span");
         desc.className = "reminder-desc";
-        desc.innerHTML = obj.desc;
+        desc.innerHTML = obj.label;
 
         let check = document.createElement("img");
         check.src = "./images/check.png";
@@ -190,7 +198,6 @@ function updateRemindersScreen() {
 
 function updateAlarmsScreen() {
     $("alarms-container").innerHTML = "";
-    console.log("jhere");
     for(let obj of data.alarms) { 
         console.log("adding alarm");
         let alarm = document.createElement("div");
@@ -219,6 +226,21 @@ function updateAlarmsScreen() {
         $("recent-alarms-container").appendChild(notice);
         return;
     }
+}
+
+function createReminder() {
+    let r = {
+        label: $("reminder-add-label").value,
+        desc: $("reminder-add-desc").value,
+        date: $("reminder-add-date").value,
+        time: $("reminder-add-time").value,
+        id: Math.random().toFixed(3)*100,
+        state: 0
+    };
+    data.reminders.push(r);
+    clearPopups();
+    updateScreen();
+    console.log(r);
 }
 
 function convertTime(t) {

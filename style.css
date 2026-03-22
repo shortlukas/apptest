@@ -11,7 +11,7 @@ html {
 
 #frame {
     width: 402px;
-    height: 874px;
+    height: 774px;
     border: 1px solid gray;
     background-color: rgb(52, 50, 59);
     border-radius: 20px;
@@ -160,7 +160,7 @@ html {
 }
 
 .popup.on {
-    display: block;
+    display: flex;
     z-index: 400;
 }
 
@@ -181,4 +181,18 @@ html {
     font-size: 16px;
     border: 3px solid rgb(52, 50, 59);
     padding-left: 10px;
+}
+
+.dropdown {
+    display: none;
+}
+
+.dropdown.on {
+    display: flex;
+}
+
+.confirm-btn {
+    background-color: #339025;
+    align-items: center;
+    justify-content: center;
 }
