@@ -3,8 +3,8 @@ function $(id) {
 }
 
 let data = {
-    alarms: [{time: 2100, desc: "Study Vocab Set1,Set2,Set3", id: 1}],
-    reminders: [{time: 2100, label: "Vocab", desc: "Study Vocab Set1,Set2,Set3", id: 1, state: 0}],
+    alarms: [{label: "vocab", month: "Feb", day: 20, hour: "12", minute: "30", ampm: "AM", id: 101}],
+    reminders: [{label: "vocab", month: "Feb", day: 20, hour: "12", minute: "30", ampm: "AM", id: 101, state: 0}],
     r_alarms: [],
     r_reminders: []
 }
@@ -17,6 +17,29 @@ const screens = {
     "alarms" : -804,
     "settings" : -1206,
     "user" : -1608
+}
+
+const calender = {
+    "Jan" : 31,
+    "Feb" : 28,
+    "Mar" : 31,
+    "Apr" : 30,
+    "May" : 31,
+    "Jun" : 30,
+    "Jul" : 31,
+    "Aug" : 31,
+    "Sep" : 30,
+    "Oct" : 31,
+    "Nov" : 30,
+    "Dec" : 31,
+}
+
+let setreminder = {
+    month: "Jan",
+    day: 1,
+    hour: 1,
+    minute: 1,
+    ampm: "AM"
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -36,12 +59,79 @@ document.addEventListener("DOMContentLoaded", function() {
 
     $("alarm-toggle").addEventListener("click", function() {
         let d = $("alarm-dropdown")
-        if(d.classList.contains("on")) {d.classList.toggle("on", false)}
-        else {d.classList.toggle("on", true)}
+        if(d.classList.contains("on")) {
+            d.classList.toggle("on", false)
+            $("alarm-toggle-icon").src = "./images/check.png";
+        
+        }
+        else {
+            d.classList.toggle("on", true);
+            $("alarm-toggle-icon").src = "./images/check-select.png";
+        }
     })
 
     $("reminder-create-btn").addEventListener("click", function() {createReminder()});
+
+    let months = document.getElementsByClassName("month scroll-opt");
+    for(let obj of months) {obj.addEventListener("click", function() {
+        for(let a of months) {a.classList.toggle("select", false)}
+        obj.classList.toggle("select", true);
+        setreminder.month = obj.innerHTML;
+        fillDays(calender[obj.id]);
+    })}
+
+    let ampm = document.getElementsByClassName("ampm scroll-opt");
+    for(let obj of ampm) { obj.addEventListener("click", function() {
+        for(let a of ampm) {a.classList.toggle("select", false)}
+        obj.classList.toggle("select", true);
+        setreminder.ampm = obj.innerHTML;
+    })}
+    
+    fillDays(31);
+
+    for(let i = 1; i < 13; i++) {
+        let opt = document.createElement("div");
+        opt.className = "hour scroll-opt";
+        opt.innerHTML = i;
+        opt.addEventListener("click", function() {
+            let hours = document.getElementsByClassName("hour scroll-opt");
+            for(let obj of hours) {obj.classList.toggle("select", false)}
+            opt.classList.toggle("select", true);
+            setreminder.hour = opt.innerHTML;
+        });
+        $("reminder-hour").appendChild(opt);
+    }
+    for(let i = 0; i < 60; i++) {
+        let opt = document.createElement("div");
+        opt.className = "minute scroll-opt";
+        opt.innerHTML = (i < 10 ? "0" : "") + i;
+        opt.addEventListener("click", function() {
+            let minutes = document.getElementsByClassName("minute scroll-opt");
+            for(let obj of minutes) {obj.classList.toggle("select", false)}
+            opt.classList.toggle("select", true);
+            setreminder.minute = opt.innerHTML;
+        });
+        $("reminder-minute").appendChild(opt);
+    }
 })
+
+function fillDays(n) {
+    $("reminder-day").innerHTML = "";
+    for(let i = 1; i < n+1; i++) {
+        let opt = document.createElement("div");
+        opt.className = "day scroll-opt";
+        opt.innerHTML = i;
+
+        let days = document.getElementsByClassName("day scroll-opt");
+        opt.addEventListener("click", function() {
+            for(let a of days) {a.classList.toggle("select", false)}
+            opt.classList.toggle("select", true);
+            setreminder.day = opt.innerHTML;
+        })
+
+        $("reminder-day").appendChild(opt);
+    }
+}
 
 function goScreen(a) {
     if(thisScreen == a) {return}
@@ -94,11 +184,11 @@ function updateHomeScreen() {
         alarm.className = "content";
         let time = document.createElement("span");
         time.className = "alarm-time";
-        let t = convertTime(obj.time);
+        let t = convertTime(obj);
         time.innerHTML = t;
         let desc = document.createElement("span");
         desc.className = "alarm-desc";
-        desc.innerHTML = obj.desc;
+        desc.innerHTML = obj.label;
 
         alarm.appendChild(time);
         alarm.appendChild(desc);
@@ -112,7 +202,7 @@ function updateHomeScreen() {
         reminder.className = "content";
         let alarmtxt = document.createElement("span");
         alarmtxt.className = "reminder-alarmtxt";
-        let t = convertTime(obj.time);
+        let t = convertTime(obj);
         alarmtxt.innerHTML = "alarm: " + t;
         let desc = document.createElement("span");
         desc.className = "reminder-desc";
@@ -155,7 +245,7 @@ function updateRemindersScreen() {
         reminder.className = "content";
         let alarmtxt = document.createElement("span");
         alarmtxt.className = "reminder-alarmtxt";
-        let t = convertTime(obj.time);
+        let t = convertTime(obj);
         alarmtxt.innerHTML = "alarm: " + t;
         let desc = document.createElement("span");
         desc.className = "reminder-desc";
@@ -204,7 +294,7 @@ function updateAlarmsScreen() {
         alarm.className = "content";
         let time = document.createElement("span");
         time.className = "alarm-time";
-        let t = convertTime(obj.time);
+        let t = convertTime(obj);
         time.innerHTML = t;
         let desc = document.createElement("span");
         desc.className = "alarm-desc";
@@ -231,10 +321,11 @@ function updateAlarmsScreen() {
 function createReminder() {
     let r = {
         label: $("reminder-add-label").value,
-        desc: $("reminder-add-desc").value,
-        date: $("reminder-add-date").value,
-        time: $("reminder-add-time").value,
-        id: Math.random().toFixed(3)*100,
+        month: setreminder.month,
+        day: setreminder.day,
+        hour: setreminder.hour,
+        minute: setreminder.minute,
+        ampm: setreminder.ampm,
         state: 0
     };
     data.reminders.push(r);
@@ -244,12 +335,13 @@ function createReminder() {
 }
 
 function convertTime(t) {
-    let z = "o";
-    if(t > 1159) {z = "p"} else {z = "a"}
-    if(t > 1259) {t -= 1200}
-    let x = t.toString();
-    if(t < 1000) {x = "0" + x}
-    let a = x.slice(0, 2);
-    let b = x.slice(2, 4);
-    return a + ":" + b + z;
+    return t.hour + ":" + t.minute + " " + t.ampm;
+    // let z = "o";
+    // if(t > 1159) {z = "p"} else {z = "a"}
+    // if(t > 1259) {t -= 1200}
+    // let x = t.toString();
+    // if(t < 1000) {x = "0" + x}
+    // let a = x.slice(0, 2);
+    // let b = x.slice(2, 4);
+    // return a + ":" + b + z;
 }
