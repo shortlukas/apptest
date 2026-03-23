@@ -41,6 +41,11 @@ let setreminder = {
     minute: 1,
     ampm: "AM"
 }
+let setalarm = {
+    hour: 1,
+    minute: 1,
+    ampm: "AM"
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     updateHomeScreen();
@@ -56,6 +61,10 @@ document.addEventListener("DOMContentLoaded", function() {
     for(let obj of backbtns) {obj.addEventListener("click", function() {clearPopups()})}
 
     $("add-reminder-btn").addEventListener("click", function() {showPopup("reminders-add")});
+    $("add-reminder-btn2").addEventListener("click", function() {showPopup("reminders-add")});
+
+    $("add-alarm-btn").addEventListener("click", function() {showPopup("alarms-add")});
+    $("add-alarm-btn2").addEventListener("click", function() {showPopup("alarms-add")});
 
     $("alarm-toggle").addEventListener("click", function() {
         let d = $("alarm-dropdown")
@@ -71,6 +80,7 @@ document.addEventListener("DOMContentLoaded", function() {
     })
 
     $("reminder-create-btn").addEventListener("click", function() {createReminder()});
+    $("alarm-create-btn").addEventListener("click", function() {createAlarm()});
 
     let months = document.getElementsByClassName("month scroll-opt");
     for(let obj of months) {obj.addEventListener("click", function() {
@@ -85,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
         for(let a of ampm) {a.classList.toggle("select", false)}
         obj.classList.toggle("select", true);
         setreminder.ampm = obj.innerHTML;
+        setalarm.ampm = obj.innerHTML;
     })}
     
     fillDays(31);
@@ -98,8 +109,10 @@ document.addEventListener("DOMContentLoaded", function() {
             for(let obj of hours) {obj.classList.toggle("select", false)}
             opt.classList.toggle("select", true);
             setreminder.hour = opt.innerHTML;
+            setalarm.hour = opt.innerHTML;
         });
         $("reminder-hour").appendChild(opt);
+        $("alarm-hour").appendChild(opt);
     }
     for(let i = 0; i < 60; i++) {
         let opt = document.createElement("div");
@@ -110,8 +123,10 @@ document.addEventListener("DOMContentLoaded", function() {
             for(let obj of minutes) {obj.classList.toggle("select", false)}
             opt.classList.toggle("select", true);
             setreminder.minute = opt.innerHTML;
+            setalarm.minute = opt.innerHTML;
         });
         $("reminder-minute").appendChild(opt);
+        $("alarm-minute").appendChild(opt);
     }
 })
 
@@ -329,6 +344,19 @@ function createReminder() {
         state: 0
     };
     data.reminders.push(r);
+    clearPopups();
+    updateScreen();
+    console.log(r);
+}
+
+function createAlarm() {
+    let r = {
+        label: $("alarm-add-label").value,
+        hour: setalarm.hour,
+        minute: setalarm.minute,
+        ampm: setalarm.ampm,
+    };
+    data.alarms.push(r);
     clearPopups();
     updateScreen();
     console.log(r);

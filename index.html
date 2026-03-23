@@ -19,9 +19,11 @@
                 <div class="content-box">
                     <div class="content header">
                         <span>Alarms</span>
-                        <div class="end-container"><span style="font-size: 20px">Add</span></div>
+                        <div class="end-container">
+                            <div id="add-alarm-btn" class="btn-container"><span style="font-size: 20px">Add</span></div>
+                        </div>
                     </div>
-                    <div id="home-alarms-container"></div>
+                    <div id="home-alarms-container" class="content-box" style="border-radius: 0px"></div>
                 </div>
                 <div class="content-box">
                     <div class="content header">
@@ -30,37 +32,41 @@
                             <div id="add-reminder-btn" class="btn-container"><span style="font-size: 20px">Add</span></div>
                         </div>
                     </div>
-                    <div id="home-reminders-container"></div>
+                    <div id="home-reminders-container" class="content-box" style="border-radius: 0px"></div>
                 </div>
             </div>
             <div id="reminders" class="screen">
                 <div class="content-box">
                     <div class="content header">
                         <span style="font-size: 20px">Edit</span>
-                        <div class="end-container"><span style="font-size: 20px">Add</span></div>
+                        <div class="end-container">
+                            <div id="add-reminder-btn2" class="btn-container"><span style="font-size: 20px">Add</span></div>
+                        </div>
                     </div>
-                    <div id="reminders-container"></div>
+                    <div id="reminders-container" class="content-box" style="border-radius: 0px"></div>
                 </div>
                 <div class="content-box">
                     <div class="content header">
                         <span>Recent Reminders</span>
                     </div>
-                    <div id="recent-reminders-container"></div>
+                    <div id="recent-reminders-container" class="content-box" style="border-radius: 0px"></div>
                 </div>
             </div>
             <div id="alarms" class="screen">
                 <div class="content-box">
                     <div class="content header">
                         <span style="font-size: 20px">Edit</span>
-                        <div class="end-container"><span style="font-size: 20px">Add</span></div>
+                        <div class="end-container">
+                            <div id="add-alarm-btn2" class="btn-container"><span style="font-size: 20px">Add</span></div>
+                        </div>
                     </div>
-                    <div id="alarms-container"></div>
+                    <div id="alarms-container" class="content-box" style="border-radius: 0px"></div>
                 </div>
                 <div class="content-box">
                     <div class="content header">
                         <span>Recent Alarms</span>
                     </div>
-                    <div id="recent-alarms-container"></div>
+                    <div id="recent-alarms-container" class="content-box" style="border-radius: 0px"></div>
                 </div>
             </div>
             <div id="settings" class="screen">
@@ -162,6 +168,38 @@
             </div>
             <div class="content-box">
                 <div id="reminder-create-btn" class="content confirm-btn">
+                    <span>Confirm</span>
+                </div>
+            </div>
+        </div>
+        <div id="alarms-add" class="screen popup">
+            <div class="content-box">
+                <div class="content header">
+                    <span style="font-size: 20px; flex-shrink: 0">Create Alarm</span>
+                    <div class="end-container">
+                        <div id=back-btn class="btn-container back-btn"><span style="font-size: 20px">Back</span></div>
+                    </div>
+                </div>
+                <div class="content">
+                    <span style="font-size: 16px; flex-shrink: 0">Label</span>
+                    <div class="end-container">
+                        <input id="alarm-add-label" class="text-input" placeholder="Edit...">
+                    </div>
+                </div>
+                <div class="content">
+                    <span style="font-size: 16px; flex-shrink: 0">Edit Time</span>
+                    <div class="end-container" style="gap: 5px">
+                        <div id="alarm-hour" class="scroll"></div>
+                        <div id="alarm-minute" class="scroll"></div>
+                        <div id="alarm-ampm" class="scroll" style="height: 50px">
+                            <div id="AM" class="ampm scroll-opt">AM</div>
+                            <div id="PM" class="ampm scroll-opt">PM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-box">
+                <div id="alarm-create-btn" class="content confirm-btn">
                     <span>Confirm</span>
                 </div>
             </div>

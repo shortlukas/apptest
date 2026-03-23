@@ -112,7 +112,8 @@ html {
 }
 
 .alarm-time {
-    font-size: 48px;
+    font-size: 38px;
+    width: 170px;
 }
 
 .alarm-desc {
