@@ -204,6 +204,38 @@
                 </div>
             </div>
         </div>
+        <div id="alarm-edit" class="screen popup">
+            <div class="content-box">
+                <div class="content header">
+                    <span style="font-size: 20px; flex-shrink: 0">Edit Alarm</span>
+                    <div class="end-container">
+                        <img id="alarm-delete-btn" class="icon-30 delete-btn" src="./images/trash.png">
+                    </div>
+                </div>
+                <div class="content">
+                    <span style="font-size: 16px; flex-shrink: 0">Label</span>
+                    <div class="end-container">
+                        <input id="alarm-edit-label" class="text-input" placeholder="Edit...">
+                    </div>
+                </div>
+                <div class="content">
+                    <span style="font-size: 16px; flex-shrink: 0">Edit Time</span>
+                    <div class="end-container" style="gap: 5px">
+                        <div id="alarm-edit-hour" class="scroll"></div>
+                        <div id="alarm-edit-minute" class="scroll"></div>
+                        <div id="alarm-edit-ampm" class="scroll" style="height: 50px">
+                            <div id="AM" class="ampm scroll-opt">AM</div>
+                            <div id="PM" class="ampm scroll-opt">PM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-box">
+                <div id="alarm-edit-confirm-btn" class="content confirm-btn">
+                    <span>Confirm</span>
+                </div>
+            </div>
+        </div>
         <div id="nav">
             <div id="home-btn" class="nav-btn"><img id="home-icon" src="./images/home-select.png"class="icon-50"></div>
             <div id="reminders-btn" class="nav-btn"><img id="reminders-icon" src="./images/reminders.png"class="icon-50"></div>

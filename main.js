@@ -4,7 +4,7 @@ function $(id) {
 
 let data = {
     alarms: [{label: "vocab", month: "Feb", day: 20, hour: "12", minute: "30", ampm: "AM", id: 101}],
-    reminders: [{label: "vocab", month: "Feb", day: 20, hour: "12", minute: "30", ampm: "AM", id: 101, state: 0}],
+    reminders: [{label: "vocab", month: "Feb", day: 20, hour: "12", minute: "30", ampm: "AM", id: 101, state: 0, sync: false}],
     r_alarms: [],
     r_reminders: []
 }
@@ -35,6 +35,7 @@ const calender = {
 }
 
 let setreminder = {
+    sync: false,
     month: "Jan",
     day: 1,
     hour: 1,
@@ -42,6 +43,12 @@ let setreminder = {
     ampm: "AM"
 }
 let setalarm = {
+    hour: 1,
+    minute: 1,
+    ampm: "AM"
+}
+
+let editalarm = {
     hour: 1,
     minute: 1,
     ampm: "AM"
@@ -71,11 +78,13 @@ document.addEventListener("DOMContentLoaded", function() {
         if(d.classList.contains("on")) {
             d.classList.toggle("on", false)
             $("alarm-toggle-icon").src = "./images/check.png";
+            setreminder.sync = false;
         
         }
         else {
             d.classList.toggle("on", true);
             $("alarm-toggle-icon").src = "./images/check-select.png";
+            setreminder.sync = true;
         }
     })
 
@@ -91,11 +100,12 @@ document.addEventListener("DOMContentLoaded", function() {
     })}
 
     let ampm = document.getElementsByClassName("ampm scroll-opt");
-    for(let obj of ampm) { obj.addEventListener("click", function() {
+    for(let obj of ampm) {obj.addEventListener("click", function() {
         for(let a of ampm) {a.classList.toggle("select", false)}
         obj.classList.toggle("select", true);
         setreminder.ampm = obj.innerHTML;
         setalarm.ampm = obj.innerHTML;
+        editalarm.ampm = obj.innerHTML;
     })}
     
     fillDays(31);
@@ -104,29 +114,45 @@ document.addEventListener("DOMContentLoaded", function() {
         let opt = document.createElement("div");
         opt.className = "hour scroll-opt";
         opt.innerHTML = i;
-        opt.addEventListener("click", function() {
+
+        function hourClick() {
             let hours = document.getElementsByClassName("hour scroll-opt");
             for(let obj of hours) {obj.classList.toggle("select", false)}
-            opt.classList.toggle("select", true);
-            setreminder.hour = opt.innerHTML;
-            setalarm.hour = opt.innerHTML;
-        });
+            this.classList.toggle("select", true);
+            setreminder.hour = this.innerHTML;
+            setalarm.hour = this.innerHTML;
+            editalarm.hour = this.innerHTML;
+        };
+        opt.addEventListener("click", hourClick);
+        
+        const opt2 = opt.cloneNode(true);
+        const opt3 = opt2.cloneNode(true);
+        opt2.addEventListener("click", hourClick);
+        opt3.addEventListener("click", hourClick);
         $("reminder-hour").appendChild(opt);
-        $("alarm-hour").appendChild(opt);
+        $("alarm-hour").appendChild(opt2);
+        $("alarm-edit-hour").appendChild(opt3);
     }
     for(let i = 0; i < 60; i++) {
         let opt = document.createElement("div");
         opt.className = "minute scroll-opt";
         opt.innerHTML = (i < 10 ? "0" : "") + i;
-        opt.addEventListener("click", function() {
+        function minuteClick() {
             let minutes = document.getElementsByClassName("minute scroll-opt");
             for(let obj of minutes) {obj.classList.toggle("select", false)}
-            opt.classList.toggle("select", true);
-            setreminder.minute = opt.innerHTML;
-            setalarm.minute = opt.innerHTML;
-        });
+            this.classList.toggle("select", true);
+            setreminder.minute = this.innerHTML;
+            setalarm.minute = this.innerHTML;
+            editalarm.minute = this.innerHTML;
+        };
+        opt.addEventListener("click", minuteClick);
+        const opt2 = opt.cloneNode(true);
+        const opt3 = opt2.cloneNode(true);
+        opt2.addEventListener("click", minuteClick);
+        opt3.addEventListener("click", minuteClick);
         $("reminder-minute").appendChild(opt);
-        $("alarm-minute").appendChild(opt);
+        $("alarm-minute").appendChild(opt2);
+        $("alarm-edit-minute").appendChild(opt3);
     }
 })
 
@@ -192,101 +218,12 @@ function updateScreen() {
 }
 
 function updateHomeScreen() {
-    $("home-alarms-container").innerHTML = "";
-
-    for(let obj of data.alarms) { 
-        let alarm = document.createElement("div");
-        alarm.className = "content";
-        let time = document.createElement("span");
-        time.className = "alarm-time";
-        let t = convertTime(obj);
-        time.innerHTML = t;
-        let desc = document.createElement("span");
-        desc.className = "alarm-desc";
-        desc.innerHTML = obj.label;
-
-        alarm.appendChild(time);
-        alarm.appendChild(desc);
-        $("home-alarms-container").appendChild(alarm);
-    }
-
-    $("home-reminders-container").innerHTML = "";
-
-    for(let obj of data.reminders) { 
-        let reminder = document.createElement("div");
-        reminder.className = "content";
-        let alarmtxt = document.createElement("span");
-        alarmtxt.className = "reminder-alarmtxt";
-        let t = convertTime(obj);
-        alarmtxt.innerHTML = "alarm: " + t;
-        let desc = document.createElement("span");
-        desc.className = "reminder-desc";
-        desc.innerHTML = obj.label;
-
-        let check = document.createElement("img");
-        check.src = "./images/check.png";
-        check.className = "icon-40";
-
-        
-
-        reminder.appendChild(check);
-        reminder.appendChild(desc);
-        reminder.appendChild(alarmtxt);
-
-        let del = document.createElement("img");
-        del.src = "./images/delete.png";
-        del.className = "icon-40";
-        let delcontainer = document.createElement("div");
-        delcontainer.className = "end-container";
-        delcontainer.style.width = "59px";
-        delcontainer.appendChild(del);
-
-        reminder.appendChild(delcontainer);
-
-        if(obj.state == 1) {
-            let halo = document.createElement("img");
-            halo.src = "./images/halo.png";
-        }
-        $("home-reminders-container").appendChild(reminder);
-    }
-
+    renderReminders(1);
+    renderAlarms(1);
 }
 
 function updateRemindersScreen() {
-    $("reminders-container").innerHTML = "";
-
-    for(let obj of data.reminders) { 
-        let reminder = document.createElement("div");
-        reminder.className = "content";
-        let alarmtxt = document.createElement("span");
-        alarmtxt.className = "reminder-alarmtxt";
-        let t = convertTime(obj);
-        alarmtxt.innerHTML = "alarm: " + t;
-        let desc = document.createElement("span");
-        desc.className = "reminder-desc";
-        desc.innerHTML = obj.desc;
-
-        let check = document.createElement("img");
-        check.src = "./images/check.png";
-        check.className = "icon-40";
-
-        
-
-        reminder.appendChild(check);
-        reminder.appendChild(desc);
-        reminder.appendChild(alarmtxt);
-
-        let del = document.createElement("img");
-        del.src = "./images/delete.png";
-        del.className = "icon-40";
-        let delcontainer = document.createElement("div");
-        delcontainer.className = "end-container";
-        delcontainer.style.width = "59px";
-        delcontainer.appendChild(del);
-
-        reminder.appendChild(delcontainer);
-        $("reminders-container").appendChild(reminder);
-    }
+    renderReminders(2);
 
     $("recent-reminders-container").innerHTML = "";
     if(data.r_reminders.length == 0) {
@@ -302,23 +239,7 @@ function updateRemindersScreen() {
 }
 
 function updateAlarmsScreen() {
-    $("alarms-container").innerHTML = "";
-    for(let obj of data.alarms) { 
-        console.log("adding alarm");
-        let alarm = document.createElement("div");
-        alarm.className = "content";
-        let time = document.createElement("span");
-        time.className = "alarm-time";
-        let t = convertTime(obj);
-        time.innerHTML = t;
-        let desc = document.createElement("span");
-        desc.className = "alarm-desc";
-        desc.innerHTML = obj.desc;
-
-        alarm.appendChild(time);
-        alarm.appendChild(desc);
-        $("alarms-container").appendChild(alarm);
-    }
+    renderAlarms(2);
 
     $("recent-alarms-container").innerHTML = "";
     if(data.r_alarms.length == 0) {
@@ -335,26 +256,41 @@ function updateAlarmsScreen() {
 
 function createReminder() {
     let r = {
+        sync: setreminder.sync,
         label: $("reminder-add-label").value,
         month: setreminder.month,
         day: setreminder.day,
         hour: setreminder.hour,
         minute: setreminder.minute,
         ampm: setreminder.ampm,
-        state: 0
+        state: 0,
+        id: Math.random().toFixed(3) * 1000
     };
     data.reminders.push(r);
+    if(r.sync) {
+        let a = {
+            sync: true,
+            label: r.label,
+            hour: r.hour,
+            minute: r.minute,
+            ampm: r.ampm,
+            id: r.id
+        }
+        data.alarms.push(a);
+    }
     clearPopups();
     updateScreen();
     console.log(r);
 }
 
-function createAlarm() {
+function createAlarm(a=false) {
     let r = {
+        sync: a,
         label: $("alarm-add-label").value,
         hour: setalarm.hour,
         minute: setalarm.minute,
         ampm: setalarm.ampm,
+        id: Math.random().toFixed(3) * 1000
     };
     data.alarms.push(r);
     clearPopups();
@@ -372,4 +308,165 @@ function convertTime(t) {
     // let a = x.slice(0, 2);
     // let b = x.slice(2, 4);
     // return a + ":" + b + z;
+}
+
+function renderReminders(a) {
+    let id = "reminders-container";
+    if (a == 1) {id = "home-reminders-container"}
+    $(id).innerHTML = "";
+
+    $(id).innerHTML = "";
+    for(let obj of data.reminders) { 
+        let reminder = document.createElement("div");
+        reminder.className = "content";
+        let alarmtxt = document.createElement("span");
+        alarmtxt.className = "reminder-alarmtxt";
+        if(obj.sync) {
+            let t = convertTime(obj);
+            alarmtxt.innerHTML = "alarm: " + t;
+        } else {
+            console.log("here", obj.month, obj.day)
+            alarmtxt.innerHTML = `due: ${obj.month} ${obj.day}`;
+        }
+        let desc = document.createElement("span");
+        desc.className = "reminder-desc";
+        desc.innerHTML = obj.label;
+
+        let check = document.createElement("img");
+        check.src = "./images/check.png";
+        check.className = "icon-40";
+
+        
+
+        reminder.appendChild(check);
+        reminder.appendChild(desc);
+        reminder.appendChild(alarmtxt);
+
+        let del = document.createElement("img");
+        del.src = "./images/delete.png";
+        del.className = "icon-40 delete-btn";
+        del.addEventListener("click", function() {
+            const index = data.reminders.findIndex(item => item.id == obj.id);
+            data.reminders.splice(index, 1);
+            console.log(obj);
+            if(obj.sync) {
+                const indexa = data.alarms.findIndex(item => item.id == obj.id);
+                data.alarms.splice(index, 1);
+            }
+            updateScreen();
+        })
+        let delcontainer = document.createElement("div");
+        delcontainer.className = "end-container";
+        delcontainer.style.width = "59px";
+        delcontainer.appendChild(del);
+
+        reminder.appendChild(delcontainer);
+
+        if(obj.state == 1) {
+            let halo = document.createElement("img");
+            halo.src = "./images/halo.png";
+        }
+        $(id).appendChild(reminder);
+    }
+}
+
+function renderAlarms(a) {
+    let id = "alarms-container";
+    if (a == 1) {id = "home-alarms-container"}
+    $(id).innerHTML = "";
+
+    $(id).innerHTML = "";
+    for(let obj of data.alarms) { 
+        let alarm = document.createElement("div");
+        alarm.className = "content alarm";
+        alarm.addEventListener("click", function() {
+            showPopup("alarm-edit");
+            renderAlarmEdit(obj);
+        })
+        let time = document.createElement("span");
+        time.className = "alarm-time";
+        let t = convertTime(obj);
+        time.innerHTML = t;
+        let desc = document.createElement("span");
+        desc.className = "alarm-desc";
+        desc.innerHTML = obj.label;
+
+        alarm.appendChild(time);
+        alarm.appendChild(desc);
+        $(id).appendChild(alarm);
+    }
+}
+
+function renderAlarmEdit(d) {
+    $("alarm-edit-label").value = d.label;
+
+    const hours = Array.from($("alarm-edit-hour").querySelectorAll("div"));
+    for(let obj of hours) {obj.classList.toggle("select", false)}
+    const hour = Array.from($("alarm-edit-hour").querySelectorAll("div"))
+    .find(el => el.textContent.trim() == d.hour);
+    hour.classList.toggle("select", true);
+    $("alarm-edit-hour").scrollTop = d.hour*26;
+
+    const minutes = Array.from($("alarm-edit-minute").querySelectorAll("div"));
+    for(let obj of minutes) {obj.classList.toggle("select", false)}
+    const minute = Array.from($("alarm-edit-minute").querySelectorAll("div"))
+    .find(el => el.textContent.trim() == d.minute);
+    minute.classList.toggle("select", true);
+    $("alarm-edit-minute").scrollTop = d.minute*26;
+
+    const ampms = Array.from($("alarm-edit-ampm").querySelectorAll("div"));
+    for(let obj of ampms) {obj.classList.toggle("select", false)}
+    const ampm = Array.from($("alarm-edit-ampm").querySelectorAll("div"))
+    .find(el => el.textContent.trim() == d.ampm);
+    ampm.classList.toggle("select", true);
+
+    const notice = Array.from($("alarm-edit").querySelectorAll("div"))
+    .find(el => el.className == "content notice");
+    if(notice) {console.log(notice); $("alarm-edit").removeChild(notice)}
+
+    if(d.sync) {
+        let noticebox = document.createElement("div");
+        noticebox.className = "content-box";
+        let notice = document.createElement("div");
+        notice.className = "content notice";
+        let noticetxt = document.createElement("div");
+        noticetxt.className = "noticetxt";
+        noticetxt.innerHTML = "*Synced with matching reminder";
+        notice.appendChild(noticetxt);
+        noticebox.appendChild(notice);
+
+        $("alarm-edit").appendChild(noticebox);
+    }
+
+    editalarm = {
+        hour: d.hour,
+        minute: d.minute,
+        ampm: d.ampm
+    }
+
+    $("alarm-edit-confirm-btn").onclick = () => {
+        d.label = $("alarm-edit-label").value;
+        d.hour = editalarm.hour;
+        d.minute = editalarm.minute;
+        d.ampm = editalarm.ampm;
+
+        if(d.sync) {
+            const index = data.reminders.findIndex(item => item.id == d.id);
+            let r = data.reminders[index];
+            r.label = d.label;
+            r.hour = d.hour;
+            r.minute = d.minute;
+            r.ampm = d.ampm;
+        }
+
+        clearPopups();
+        updateScreen();
+    }
+
+    $("alarm-delete-btn").onclick = () => {
+        const index = data.alarms.findIndex(item => item.id == d.id);
+        data.alarms.splice(index, 1);
+        clearPopups();
+        updateScreen();
+    }
 }
