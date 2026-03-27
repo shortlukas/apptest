@@ -152,7 +152,7 @@ html {
     justify-content: center;
 }
 
-.noticetxt {
+.dtxt {
     font-size: 12px;
 }
 
@@ -161,6 +161,10 @@ html {
     width: 302px;
     padding-left: 20px;
     padding-right: 20px;
+}
+
+.content.setting:hover {
+    background-color: rgb(42, 40, 49);
 }
 
 .screen.popup {
