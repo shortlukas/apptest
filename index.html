@@ -18,41 +18,48 @@
             <div id="home" class="screen">
                 <div class="content-box">
                     <div class="content header">
-                        <span>Alarms</span>
+                        <span>Home</span>
                         <div class="end-container">
-                            <div id="add-alarm-btn" class="btn-container"><span style="font-size: 20px">Add</span></div>
+                            <div id="time" class="btn-container"><span style="font-size: 20px">5:31pm</span></div>
                         </div>
                     </div>
-                    <div id="home-alarms-container" class="content-box" style="border-radius: 0px"></div>
                 </div>
                 <div class="content-box">
                     <div class="content header">
-                        <span>Reminders</span>
+                        <span style="width: 200px">Next Up</span>
                         <div class="end-container">
-                            <div id="add-reminder-btn" class="btn-container"><span style="font-size: 20px">Add</span></div>
+                            <div id="snooze-btn" class="btn-container grad blue"><span id="snooze-txt" style="font-size: 15px">Snooze</span></div>
                         </div>
                     </div>
-                    <div id="home-reminders-container" class="content-box" style="border-radius: 0px"></div>
+                    <div id="upnext-container" class="content-box" style="border-radius: 0px"></div>
+                </div>
+                <div class="content-box">
+                    <div class="content header">
+                        <span style="width: 200px">Tasks For Today</span>
+                    </div>
+                    <div id="fortoday-container" class="content-box" style="border-radius: 0px"></div>
                 </div>
             </div>
-            <div id="reminders" class="screen">
+            <div id="tasks" class="screen">
                 <div class="content-box">
                     <div class="content header">
-                        <span style="font-size: 20px">Reminders</span>
+                        <span style="font-size: 24px; width: 200px">All Tasks</span>
                         <div class="end-container">
-                            <div id="add-reminder-btn2" class="btn-container"><span style="font-size: 20px">Add</span></div>
+                            <div id="add-task-btn" class="btn-container grad green"><span style="font-size: 20px">Add</span></div>
                         </div>
                     </div>
-                    <div id="reminders-container" class="content-box" style="border-radius: 0px"></div>
+                    <div id="tasks-container" class="content-box" style="border-radius: 0px"></div>
                 </div>
                 <div class="content-box">
                     <div class="content header">
-                        <span>Recent Reminders</span>
+                        <span>Recent</span>
+                        <div class="end-container">
+                            <div id="clear-btn" class="btn-container grad red"><span style="font-size: 20px">Clear</span></div>
+                        </div>
                     </div>
-                    <div id="recent-reminders-container" class="content-box" style="border-radius: 0px"></div>
+                    <div id="recent-tasks-container" class="content-box" style="border-radius: 0px"></div>
                 </div>
             </div>
-            
             <div id="settings" class="screen">
                 <div class="content-box">
                     <div class="content header">
@@ -90,7 +97,7 @@
                 <div class="content header">
                     <span style="font-size: 20px">General</span>
                     <div class="end-container">
-                        <div id=back-btn class="btn-container back-btn"><span style="font-size: 20px">Back</span></div>
+                        <div id=back-btn class="btn-container back-btn grad gray"><span style="font-size: 20px">Back</span></div>
                     </div>
                 </div>
                 <div class="content notice">
@@ -98,24 +105,24 @@
                 </div>
             </div>
         </div>
-        <div id="reminders-add" class="screen popup">
+        <div id="tasks-add" class="screen popup">
             <div class="content-box">
                 <div class="content header">
-                    <span style="font-size: 20px; flex-shrink: 0">Create Reminder</span>
+                    <span style="font-size: 20px; flex-shrink: 0">Create task</span>
                     <div class="end-container">
-                        <div id=back-btn class="btn-container back-btn"><span style="font-size: 20px">Back</span></div>
+                        <div id=back-btn class="btn-container back-btn grad gray"><span style="font-size: 20px">Back</span></div>
                     </div>
                 </div>
                 <div class="content">
                     <span style="font-size: 16px; flex-shrink: 0">Label</span>
                     <div class="end-container">
-                        <input id="reminder-add-label" class="text-input" placeholder="Edit...">
+                        <input id="task-add-label" class="text-input" placeholder="Edit...">
                     </div>
                 </div>
                 <div class="content">
                     <span style="font-size: 16px; flex-shrink: 0">Due Date</span>
                     <div class="end-container" style="gap: 10px">
-                        <div id="reminder-month" class="scroll">
+                        <div id="task-month" class="scroll">
                             <div id="Jan" class="month scroll-opt select">Jan</div>
                             <div id="Feb" class="month scroll-opt">Feb</div>
                             <div id="Mar" class="month scroll-opt">Mar</div>
@@ -129,101 +136,98 @@
                             <div id="Nov" class="month scroll-opt">Nov</div>
                             <div id="Dec" class="month scroll-opt">Dec</div>
                         </div>
-                        <div id="reminder-day" class="scroll"></div>
+                        <div id="task-day" class="scroll"></div>
                     </div>
                 </div>
             </div>
             <div class="content-box">
                 <div class="content">
-                    <div id="alarm-toggle" class="btn-container" style="width: auto"><img id="alarm-toggle-icon" class="icon-40" src="./images/check.png"></div>
-                    <span style="font-size: 16px; flex-shrink: 0">Add Alarm</span>
-                </div>
-                <div id="alarm-dropdown" class="content dropdown">
                     <span style="font-size: 16px; flex-shrink: 0">Edit Time</span>
                     <div class="end-container" style="gap: 5px">
-                        <div id="reminder-hour" class="scroll"></div>
-                        <div id="reminder-minute" class="scroll"></div>
-                        <div id="reminder-ampm" class="scroll" style="height: 50px">
+                        <div id="task-hour" class="scroll"></div>
+                        <div id="task-minute" class="scroll"></div>
+                        <div id="task-ampm" class="scroll" style="height: 50px">
                             <div id="AM" class="ampm scroll-opt">AM</div>
                             <div id="PM" class="ampm scroll-opt">PM</div>
                         </div>
                     </div>
                 </div>
+                <div class="content">
+                    <span style="font-size: 16px; flex-shrink: 0">Snooze</span>
+                    <div class="end-container" style="gap: 5px">
+                        <div id="task-snooze" class="scroll"></div>
+                    </div>
+                </div>
             </div>
             <div class="content-box">
-                <div id="reminder-create-btn" class="content confirm-btn">
+                <div id="task-create-btn" class="content confirm-btn">
                     <span>Confirm</span>
                 </div>
             </div>
         </div>
-        <div id="alarms-add" class="screen popup">
+        <div id="task-edit" class="screen popup">
             <div class="content-box">
                 <div class="content header">
-                    <span style="font-size: 20px; flex-shrink: 0">Create Alarm</span>
-                    <div class="end-container">
-                        <div id=back-btn class="btn-container back-btn"><span style="font-size: 20px">Back</span></div>
+                    <span style="font-size: 20px; flex-shrink: 0">Edit Task</span>
+                    <div class="end-container grad red">
+                        <img id="delete-btn" class="icon-30 delete-btn" src="./images/trash.png">
                     </div>
                 </div>
                 <div class="content">
-                    <span style="font-size: 16px; flex-shrink: 0">Label</span>
+                    <span style="font-size: 16px; flex-shrink: 0">Edit Label</span>
                     <div class="end-container">
-                        <input id="alarm-add-label" class="text-input" placeholder="Edit...">
+                        <input id="edit-label" class="text-input" placeholder="Edit...">
                     </div>
                 </div>
+                <div class="content">
+                    <span style="font-size: 16px; flex-shrink: 0">Edit Due Date</span>
+                    <div class="end-container" style="gap: 10px">
+                        <div id="edit-month" class="scroll">
+                            <div id="Jan" class="month scroll-opt select">Jan</div>
+                            <div id="Feb" class="month scroll-opt">Feb</div>
+                            <div id="Mar" class="month scroll-opt">Mar</div>
+                            <div id="Apr" class="month scroll-opt">Apr</div>
+                            <div id="May" class="month scroll-opt">May</div>
+                            <div id="Jun" class="month scroll-opt">Jun</div>
+                            <div id="Jul" class="month scroll-opt">Jul</div>
+                            <div id="Aug" class="month scroll-opt">Aug</div>
+                            <div id="Sep" class="month scroll-opt">Sep</div>
+                            <div id="Oct" class="month scroll-opt">Oct</div>
+                            <div id="Nov" class="month scroll-opt">Nov</div>
+                            <div id="Dec" class="month scroll-opt">Dec</div>
+                        </div>
+                        <div id="edit-day" class="scroll"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-box">
                 <div class="content">
                     <span style="font-size: 16px; flex-shrink: 0">Edit Time</span>
                     <div class="end-container" style="gap: 5px">
-                        <div id="alarm-hour" class="scroll"></div>
-                        <div id="alarm-minute" class="scroll"></div>
-                        <div id="alarm-ampm" class="scroll" style="height: 50px">
+                        <div id="edit-hour" class="scroll"></div>
+                        <div id="edit-minute" class="scroll"></div>
+                        <div id="edit-ampm" class="scroll" style="height: 50px">
                             <div id="AM" class="ampm scroll-opt">AM</div>
                             <div id="PM" class="ampm scroll-opt">PM</div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="content-box">
-                <div id="alarm-create-btn" class="content confirm-btn">
-                    <span>Confirm</span>
-                </div>
-            </div>
-        </div>
-        <div id="alarm-edit" class="screen popup">
-            <div class="content-box">
-                <div class="content header">
-                    <span style="font-size: 20px; flex-shrink: 0">Edit Alarm</span>
-                    <div class="end-container">
-                        <img id="alarm-delete-btn" class="icon-30 delete-btn" src="./images/trash.png">
-                    </div>
-                </div>
                 <div class="content">
-                    <span style="font-size: 16px; flex-shrink: 0">Label</span>
-                    <div class="end-container">
-                        <input id="alarm-edit-label" class="text-input" placeholder="Edit...">
-                    </div>
-                </div>
-                <div class="content">
-                    <span style="font-size: 16px; flex-shrink: 0">Edit Time</span>
+                    <span style="font-size: 16px; flex-shrink: 0">Edit Snooze</span>
                     <div class="end-container" style="gap: 5px">
-                        <div id="alarm-edit-hour" class="scroll"></div>
-                        <div id="alarm-edit-minute" class="scroll"></div>
-                        <div id="alarm-edit-ampm" class="scroll" style="height: 50px">
-                            <div id="AM" class="ampm scroll-opt">AM</div>
-                            <div id="PM" class="ampm scroll-opt">PM</div>
-                        </div>
+                        <div id="edit-snooze" class="scroll"></div>
                     </div>
                 </div>
             </div>
             <div class="content-box">
-                <div id="alarm-edit-confirm-btn" class="content confirm-btn">
-                    <span>Confirm</span>
+                <div id="edit-confirm-btn" class="content confirm-btn">
+                    <span>Confirm Edit</span>
                 </div>
             </div>
         </div>
         <div id="nav">
             <div id="home-btn" class="nav-btn"><img id="home-icon" src="./images/home-select.png"class="icon-50"></div>
-            <div id="reminders-btn" class="nav-btn"><img id="reminders-icon" src="./images/reminders.png"class="icon-50"></div>
-            <div id="alarms-btn" class="nav-btn"><img id="alarms-icon" src="./images/alarms.png"class="icon-50"></div>
+            <div id="tasks-btn" class="nav-btn"><img id="tasks-icon" src="./images/tasks.png"class="icon-50"></div>
             <div id="settings-btn" class="nav-btn"><img id="settings-icon" src="./images/settings.png"class="icon-50"></div>
             <div id="user-btn" class="nav-btn"><img id="user-icon" src="./images/user.png"class="icon-50"></div>
         </div>

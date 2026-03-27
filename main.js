@@ -3,20 +3,17 @@ function $(id) {
 }
 
 let data = {
-    alarms: [{label: "vocab", month: "Feb", day: 20, hour: "12", minute: "30", ampm: "AM", id: 101}],
-    reminders: [{label: "vocab", month: "Feb", day: 20, hour: "12", minute: "30", ampm: "AM", id: 101, state: 0, sync: false}],
-    r_alarms: [],
-    r_reminders: []
+    tasks: [{label: "Example Task 1", month: 3, day: 26, hour: "12", minute: "30", ampm: "AM", snooze: 9, id: 101, state: 0, sync: false}],
+    r_tasks: []
 }
 
 let thisScreen = "home";
 
 const screens = {
     "home" : 0,
-    "reminders" : -402,
-    "alarms" : -804,
-    "settings" : -1206,
-    "user" : -1608
+    "tasks" : -402,
+    "settings" : -804,
+    "user" : -1206,
 }
 
 const calender = {
@@ -34,13 +31,32 @@ const calender = {
     "Dec" : 31,
 }
 
-let setreminder = {
-    sync: false,
+const calender2 = [
+    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+]
+
+const year = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+]
+
+let settask = {
     month: "Jan",
     day: 1,
     hour: 1,
     minute: 1,
-    ampm: "AM"
+    ampm: "AM",
+    snooze: 9
 }
 let setalarm = {
     hour: 1,
@@ -48,18 +64,20 @@ let setalarm = {
     ampm: "AM"
 }
 
-let editalarm = {
+let edittask = {
+    month: "Jan",
+    day: 1,
     hour: 1,
     minute: 1,
-    ampm: "AM"
+    ampm: "AM",
+    snooze: 9
 }
 
 document.addEventListener("DOMContentLoaded", function() {
     updateHomeScreen();
-
+    getTime();
     $("home-btn").addEventListener("click", function() {goScreen("home")})
-    $("reminders-btn").addEventListener("click", function() {goScreen("reminders")})
-    $("alarms-btn").addEventListener("click", function() {goScreen("alarms")})
+    $("tasks-btn").addEventListener("click", function() {goScreen("tasks")})
     $("settings-btn").addEventListener("click", function() {goScreen("settings")})
     $("user-btn").addEventListener("click", function() {goScreen("user")})
 
@@ -67,35 +85,20 @@ document.addEventListener("DOMContentLoaded", function() {
     let backbtns = document.getElementsByClassName("back-btn");
     for(let obj of backbtns) {obj.addEventListener("click", function() {clearPopups()})}
 
-    $("add-reminder-btn").addEventListener("click", function() {showPopup("reminders-add")});
-    $("add-reminder-btn2").addEventListener("click", function() {showPopup("reminders-add")});
+    $("add-task-btn").addEventListener("click", function() {showPopup("tasks-add")});
 
-    $("add-alarm-btn").addEventListener("click", function() {showPopup("alarms-add")});
-    $("add-alarm-btn2").addEventListener("click", function() {showPopup("alarms-add")});
+    $("task-create-btn").addEventListener("click", function() {createtask()});
 
-    $("alarm-toggle").addEventListener("click", function() {
-        let d = $("alarm-dropdown")
-        if(d.classList.contains("on")) {
-            d.classList.toggle("on", false)
-            $("alarm-toggle-icon").src = "./images/check.png";
-            setreminder.sync = false;
-        
-        }
-        else {
-            d.classList.toggle("on", true);
-            $("alarm-toggle-icon").src = "./images/check-select.png";
-            setreminder.sync = true;
-        }
+    $("clear-btn").addEventListener("click", function() {
+        data.r_tasks = [];
+        updateScreen();
     })
-
-    $("reminder-create-btn").addEventListener("click", function() {createReminder()});
-    $("alarm-create-btn").addEventListener("click", function() {createAlarm()});
 
     let months = document.getElementsByClassName("month scroll-opt");
     for(let obj of months) {obj.addEventListener("click", function() {
         for(let a of months) {a.classList.toggle("select", false)}
         obj.classList.toggle("select", true);
-        setreminder.month = obj.innerHTML;
+        settask.month = obj.innerHTML;
         fillDays(calender[obj.id]);
     })}
 
@@ -103,9 +106,8 @@ document.addEventListener("DOMContentLoaded", function() {
     for(let obj of ampm) {obj.addEventListener("click", function() {
         for(let a of ampm) {a.classList.toggle("select", false)}
         obj.classList.toggle("select", true);
-        setreminder.ampm = obj.innerHTML;
-        setalarm.ampm = obj.innerHTML;
-        editalarm.ampm = obj.innerHTML;
+        settask.ampm = obj.innerHTML;
+        edittask.ampm = obj.innerHTML;
     })}
     
     fillDays(31);
@@ -119,19 +121,15 @@ document.addEventListener("DOMContentLoaded", function() {
             let hours = document.getElementsByClassName("hour scroll-opt");
             for(let obj of hours) {obj.classList.toggle("select", false)}
             this.classList.toggle("select", true);
-            setreminder.hour = this.innerHTML;
-            setalarm.hour = this.innerHTML;
-            editalarm.hour = this.innerHTML;
+            settask.hour = this.innerHTML;
+            edittask.hour = this.innerHTML;
         };
         opt.addEventListener("click", hourClick);
-        
         const opt2 = opt.cloneNode(true);
-        const opt3 = opt2.cloneNode(true);
         opt2.addEventListener("click", hourClick);
-        opt3.addEventListener("click", hourClick);
-        $("reminder-hour").appendChild(opt);
-        $("alarm-hour").appendChild(opt2);
-        $("alarm-edit-hour").appendChild(opt3);
+        $("task-hour").appendChild(opt);
+        $("edit-hour").appendChild(opt2);
+        console.log(i);
     }
     for(let i = 0; i < 60; i++) {
         let opt = document.createElement("div");
@@ -141,36 +139,52 @@ document.addEventListener("DOMContentLoaded", function() {
             let minutes = document.getElementsByClassName("minute scroll-opt");
             for(let obj of minutes) {obj.classList.toggle("select", false)}
             this.classList.toggle("select", true);
-            setreminder.minute = this.innerHTML;
-            setalarm.minute = this.innerHTML;
-            editalarm.minute = this.innerHTML;
+            settask.minute = this.innerHTML;
+            edittask.minute = this.innerHTML;
         };
         opt.addEventListener("click", minuteClick);
         const opt2 = opt.cloneNode(true);
-        const opt3 = opt2.cloneNode(true);
         opt2.addEventListener("click", minuteClick);
-        opt3.addEventListener("click", minuteClick);
-        $("reminder-minute").appendChild(opt);
-        $("alarm-minute").appendChild(opt2);
-        $("alarm-edit-minute").appendChild(opt3);
+        $("task-minute").appendChild(opt);
+        $("edit-minute").appendChild(opt2);
+    }
+    for(let i = 1; i < 16; i++) {
+        let opt = document.createElement("div");
+        opt.className = "snooze scroll-opt";
+        opt.innerHTML = i;
+        function snoozeClick() {
+            let snoozes = document.getElementsByClassName("snooze scroll-opt");
+            for(let obj of snoozes) {obj.classList.toggle("select", false)}
+            this.classList.toggle("select", true);
+            settask.snooze = this.innerHTML;
+            edittask.snooze = this.innerHTML;
+        }
+        opt.addEventListener("click", snoozeClick);
+        const opt2 = opt.cloneNode(true);
+        opt2.addEventListener("click", snoozeClick);
+        $("task-snooze").appendChild(opt);
+        $("edit-snooze").appendChild(opt2);
     }
 })
 
 function fillDays(n) {
-    $("reminder-day").innerHTML = "";
+    $("task-day").innerHTML = "";
     for(let i = 1; i < n+1; i++) {
         let opt = document.createElement("div");
         opt.className = "day scroll-opt";
         opt.innerHTML = i;
-
-        let days = document.getElementsByClassName("day scroll-opt");
-        opt.addEventListener("click", function() {
-            for(let a of days) {a.classList.toggle("select", false)}
-            opt.classList.toggle("select", true);
-            setreminder.day = opt.innerHTML;
-        })
-
-        $("reminder-day").appendChild(opt);
+        function dayClick() {
+            let days = document.getElementsByClassName("day scroll-opt");
+            for(let obj of days) {obj.classList.toggle("select", false)}
+            this.classList.toggle("select", true);
+            settask.day = this.innerHTML;
+            edittask.day = this.innerHTML;
+        }
+        opt.addEventListener("click", dayClick);
+        const opt2 = opt.cloneNode(true);
+        opt2.addEventListener("click", dayClick);
+        $("task-day").appendChild(opt);
+        $("edit-day").appendChild(opt2);
     }
 }
 
@@ -183,8 +197,7 @@ function goScreen(a) {
 
     console.log("here");
     $("home-icon").src = "./images/home.png";
-    $("alarms-icon").src = "./images/alarms.png";
-    $("reminders-icon").src = "./images/reminders.png";
+    $("tasks-icon").src = "./images/tasks.png";
     $("settings-icon").src = "./images/settings.png";
     $("user-icon").src = "./images/user.png";
     console.log($("" + thisScreen + "-btn"));
@@ -204,12 +217,13 @@ function clearPopups() {
 }
 
 function updateScreen() {
+    getTime();
     switch(thisScreen) {
         case "home":
             updateHomeScreen();
             break;
-        case "reminders":
-            updateRemindersScreen();
+        case "tasks":
+            updateTasksScreen();
             break;
         case "alarms":
             updateAlarmsScreen();
@@ -218,84 +232,229 @@ function updateScreen() {
 }
 
 function updateHomeScreen() {
-    renderReminders(1);
-    renderAlarms(1);
-}
-
-function updateRemindersScreen() {
-    renderReminders(2);
-
-    $("recent-reminders-container").innerHTML = "";
-    if(data.r_reminders.length == 0) {
-        let notice = document.createElement("div");
-        notice.className = "content notice";
-        let noticetxt = document.createElement("span");
-        noticetxt.className = "noticetxt";
-        noticetxt.innerHTML = "No recent reminders";
-        notice.appendChild(noticetxt);
-        $("recent-reminders-container").appendChild(notice);
-        return;
+    
+    $("upnext-container").innerHTML = "";
+    //Find next task
+    let times = [];
+    let dates = [];
+    for(let obj of data.tasks) {
+        times.push([getNumTime(obj), obj]);
+        dates.push([getNumDate(obj), obj]);
     }
-}
-
-function updateAlarmsScreen() {
-    renderAlarms(2);
-
-    $("recent-alarms-container").innerHTML = "";
-    if(data.r_alarms.length == 0) {
-        let notice = document.createElement("div");
-        notice.className = "content notice";
-        let noticetxt = document.createElement("span");
-        noticetxt.className = "noticetxt";
-        noticetxt.innerHTML = "No recent reminders";
-        notice.appendChild(noticetxt);
-        $("recent-alarms-container").appendChild(notice);
-        return;
-    }
-}
-
-function createReminder() {
-    let r = {
-        sync: setreminder.sync,
-        label: $("reminder-add-label").value,
-        month: setreminder.month,
-        day: setreminder.day,
-        hour: setreminder.hour,
-        minute: setreminder.minute,
-        ampm: setreminder.ampm,
-        state: 0,
-        id: Math.random().toFixed(3) * 1000
-    };
-    data.reminders.push(r);
-    if(r.sync) {
-        let a = {
-            sync: true,
-            label: r.label,
-            hour: r.hour,
-            minute: r.minute,
-            ampm: r.ampm,
-            id: r.id
+    times.sort(function(a, b) {
+        return a[0] - b[0];
+    });
+    if(times.length > 0) {
+        console.log("here");
+        let next = times[0][1];
+        $("upnext-container").appendChild(renderTask(next, true));
+        console.log(next);
+        $("snooze-txt").innerHTML = `Snooze: +${next.snooze}min`;
+        $("snooze-btn").onclick = function() {
+            let m = Number(next.minute);
+            let s = Number(next.snooze);
+            next.minute = m + s;
+            if(next.minute > 59) {
+                next.minute -= 60;
+                let h = Number(next.hour);
+                next.hour = h + 1;
+                if(next.hour > 12) {
+                    next.hour -= 12;
+                    if(next.ampm == "AM") {next.ampm = "PM"} else
+                    if(next.ampm == "PM") {
+                        next.ampm = "AM";
+                        next.day ++;
+                        if(next.day > calender2[next.month-1]) {
+                            next.day = 1;
+                            next.month ++;
+                            if(next.month > 12) {
+                                next.month = 1;
+                            }
+                        }
+                    }
+                }
+            }
+            updateScreen();
         }
-        data.alarms.push(a);
+    } else {
+        let notice = document.createElement("div");
+        notice.className = "content notice";
+        let noticetxt = document.createElement("span");
+        noticetxt.className = "noticetxt";
+        noticetxt.innerHTML = "No Tasks Currently";
+        notice.appendChild(noticetxt);
+        $("upnext-container").appendChild(notice);
+        $("snooze-txt").innerHTML = `Snooze: None`;
+        $("snooze-btn").onclick = function() {
+            //
+        }
     }
-    clearPopups();
-    updateScreen();
-    console.log(r);
+
+    //For Today
+    $("fortoday-container").innerHTML = "";
+    let day = getDay();
+    console.log(dates);
+    let today = dates.filter(item => item[0].month === day.month);
+    console.log(dates);
+    console.log(today);
+    for(let obj of today) {$("fortoday-container").appendChild(renderTask(obj[1], false, true))}
+    if(today.length == 0) {
+        let notice = document.createElement("div");
+        notice.className = "content notice";
+        let noticetxt = document.createElement("span");
+        noticetxt.className = "noticetxt";
+        noticetxt.innerHTML = "No Tasks Currently";
+        notice.appendChild(noticetxt);
+        $("fortoday-container").appendChild(notice);
+    }
 }
 
-function createAlarm(a=false) {
+function getTime() {
+    let now = new Date();
+
+    let hours = now.getHours();
+    let ampm = (hours > 12 ? "pm" : "am");
+    hours = hours % 12;
+    let minutes = now.getMinutes();
+
+    let time = `${hours}:${minutes < 10 ? "0": ""}${minutes}${ampm}`
+    $("time").innerHTML = time;
+    return time;
+}
+
+function getNumDate(a) {
+    return {
+        month: a.month,
+        day: a.day
+    }
+}
+ 
+function getDay() {
+    let now = new Date()
+    const date = {
+        month: now.getMonth() + 1,
+        day: now.getDate()
+    }
+    console.log(date);
+    return date;
+}
+
+function getNumTime(a) {
+    let t = "" + (a.hour + (a.ampm == "PM" ? 12 : 0)) + a.minute;
+    return t;
+}
+function renderTask(a, b=false, c=false) {
+    let task = document.createElement("div");
+    task.className = "content";
+    task.addEventListener("click", function() {
+        showPopup("task-edit");
+        renderEdit(a);
+    })
+    let alarmtxt = document.createElement("span");
+    alarmtxt.className = "task-alarmtxt";
+    let t = b || c ? convertTime(a) : `${a.month} ${a.day}`;
+    alarmtxt.innerHTML = (b ? "upcoming:      " : c ? "alarm: " : "due: ") + t;
+    let desc = document.createElement("span");
+    desc.className = "task-desc";
+    desc.innerHTML = a.label;
+
+    let check = document.createElement("img");
+    check.src = "./images/check.png";
+    check.className = "icon-40";
+
+    task.appendChild(check);
+    task.appendChild(desc);
+    task.appendChild(alarmtxt);
+
+    let del = document.createElement("img");
+    del.src = "./images/delete.png";
+    del.className = "icon-40 delete-btn";
+    del.addEventListener("click", function(event) {
+        event.stopPropagation();
+        const index = data.tasks.findIndex(item => item.id == a.id);
+        data.r_tasks.push(data.tasks[index]);
+        data.tasks.splice(index, 1);
+        updateScreen();
+    })
+    let delcontainer = document.createElement("div");
+    delcontainer.className = "end-container";
+    delcontainer.style.width = "59px";
+    delcontainer.appendChild(del);
+
+    task.appendChild(delcontainer);
+
+    if(a.state == 1) {
+        let halo = document.createElement("img");
+        halo.src = "./images/halo.png";
+    }
+    return task;
+    
+}
+
+function renderRecent(a) {
+    let task = document.createElement("div");
+    task.className = "content";
+    let desc = document.createElement("span");
+    desc.className = "task-desc";
+    desc.innerHTML = a.label;
+    desc.style.width = "150px"
+    let alarmtxt = document.createElement("span");
+    alarmtxt.className = "task-alarmtxt recent";
+    alarmtxt.innerHTML = `date: ${a.month}, ${a.day} / alarm: ${a.hour}:${a.minute < 10 ? " " : ""}${a.minute}${a.ampm}`;
+    let add = document.createElement("img");
+    add.src = "./images/add.png";
+    add.addEventListener("click", function(event) {
+        event.stopPropagation();
+        const index = data.r_tasks.findIndex(item => item.id == a.id);
+        data.tasks.push(a);
+        data.r_tasks.splice(index, 1);
+        updateScreen();
+    })
+    let end = document.createElement("div");
+    end.className = "end-container";
+    end.style.width = "54px";
+    end.appendChild(add);
+
+    task.appendChild(desc);
+    task.appendChild(alarmtxt);
+    task.appendChild(end);
+    return task;
+}
+
+function updateTasksScreen() {
+    $("tasks-container").innerHTML = "";
+    for(let obj of data.tasks) {$("tasks-container").appendChild(renderTask(obj))}
+
+    $("recent-tasks-container").innerHTML = "";
+    if(data.r_tasks.length == 0) {
+        let notice = document.createElement("div");
+        notice.className = "content notice";
+        let noticetxt = document.createElement("span");
+        noticetxt.className = "noticetxt";
+        noticetxt.innerHTML = "No recent tasks";
+        notice.appendChild(noticetxt);
+        $("recent-tasks-container").appendChild(notice);
+        return;
+    } else {
+        for(let obj of data.r_tasks) {$("recent-tasks-container").appendChild(renderRecent(obj))}
+    }
+}
+
+function createtask() {
     let r = {
-        sync: a,
-        label: $("alarm-add-label").value,
-        hour: setalarm.hour,
-        minute: setalarm.minute,
-        ampm: setalarm.ampm,
-        id: Math.random().toFixed(3) * 1000
+        label: $("task-add-label").value,
+        month: settask.month,
+        day: settask.day,
+        hour: settask.hour,
+        minute: settask.minute,
+        ampm: settask.ampm,
+        state: 0,
+        id: Math.random().toFixed(3) * 1000,
+        snooze: settask.snooze
     };
-    data.alarms.push(r);
+    data.tasks.push(r);
     clearPopups();
     updateScreen();
-    console.log(r);
 }
 
 function convertTime(t) {
@@ -310,162 +469,75 @@ function convertTime(t) {
     // return a + ":" + b + z;
 }
 
-function renderReminders(a) {
-    let id = "reminders-container";
-    if (a == 1) {id = "home-reminders-container"}
-    $(id).innerHTML = "";
+function renderEdit(d) {
+    $("edit-label").value = d.label;
 
-    $(id).innerHTML = "";
-    for(let obj of data.reminders) { 
-        let reminder = document.createElement("div");
-        reminder.className = "content";
-        let alarmtxt = document.createElement("span");
-        alarmtxt.className = "reminder-alarmtxt";
-        if(obj.sync) {
-            let t = convertTime(obj);
-            alarmtxt.innerHTML = "alarm: " + t;
-        } else {
-            console.log("here", obj.month, obj.day)
-            alarmtxt.innerHTML = `due: ${obj.month} ${obj.day}`;
-        }
-        let desc = document.createElement("span");
-        desc.className = "reminder-desc";
-        desc.innerHTML = obj.label;
+    const months = Array.from($("edit-month").querySelectorAll("div"));
+    for(let obj of months) {obj.classList.toggle("select", false)}
+    const month = Array.from($("edit-month").querySelectorAll("div"))
+    .find(el => year.indexOf(el.textContent.trim())+1 == d.month);
+    month.classList.toggle("select", true);
+    $("edit-month").scrollTop = (d.month-1)*26;
+    
+    const days = Array.from($("edit-day").querySelectorAll("div"));
+    for(let obj of days) {obj.classList.toggle("select", false)}
+    const day = Array.from($("edit-day").querySelectorAll("div"))
+    .find(el => el.textContent.trim() == d.day);
+    day.classList.toggle("select", true);
+    $("edit-day").scrollTop = (d.day-1)*26;
 
-        let check = document.createElement("img");
-        check.src = "./images/check.png";
-        check.className = "icon-40";
+    const snoozes = Array.from($("edit-snooze").querySelectorAll("div"));
+    for(let obj of snoozes) {obj.classList.toggle("select", false)}
+    const snooze = Array.from($("edit-snooze").querySelectorAll("div"))
+    .find(el => el.textContent.trim() == d.snooze);
+    snooze.classList.toggle("select", true);
+    $("edit-snooze").scrollTop = (d.snooze-1)*26;
 
-        
-
-        reminder.appendChild(check);
-        reminder.appendChild(desc);
-        reminder.appendChild(alarmtxt);
-
-        let del = document.createElement("img");
-        del.src = "./images/delete.png";
-        del.className = "icon-40 delete-btn";
-        del.addEventListener("click", function() {
-            const index = data.reminders.findIndex(item => item.id == obj.id);
-            data.reminders.splice(index, 1);
-            console.log(obj);
-            if(obj.sync) {
-                const indexa = data.alarms.findIndex(item => item.id == obj.id);
-                data.alarms.splice(index, 1);
-            }
-            updateScreen();
-        })
-        let delcontainer = document.createElement("div");
-        delcontainer.className = "end-container";
-        delcontainer.style.width = "59px";
-        delcontainer.appendChild(del);
-
-        reminder.appendChild(delcontainer);
-
-        if(obj.state == 1) {
-            let halo = document.createElement("img");
-            halo.src = "./images/halo.png";
-        }
-        $(id).appendChild(reminder);
-    }
-}
-
-function renderAlarms(a) {
-    let id = "alarms-container";
-    if (a == 1) {id = "home-alarms-container"}
-    $(id).innerHTML = "";
-
-    $(id).innerHTML = "";
-    for(let obj of data.alarms) { 
-        let alarm = document.createElement("div");
-        alarm.className = "content alarm";
-        alarm.addEventListener("click", function() {
-            showPopup("alarm-edit");
-            renderAlarmEdit(obj);
-        })
-        let time = document.createElement("span");
-        time.className = "alarm-time";
-        let t = convertTime(obj);
-        time.innerHTML = t;
-        let desc = document.createElement("span");
-        desc.className = "alarm-desc";
-        desc.innerHTML = obj.label;
-
-        alarm.appendChild(time);
-        alarm.appendChild(desc);
-        $(id).appendChild(alarm);
-    }
-}
-
-function renderAlarmEdit(d) {
-    $("alarm-edit-label").value = d.label;
-
-    const hours = Array.from($("alarm-edit-hour").querySelectorAll("div"));
+    const hours = Array.from($("edit-hour").querySelectorAll("div"));
     for(let obj of hours) {obj.classList.toggle("select", false)}
-    const hour = Array.from($("alarm-edit-hour").querySelectorAll("div"))
+    const hour = Array.from($("edit-hour").querySelectorAll("div"))
     .find(el => el.textContent.trim() == d.hour);
     hour.classList.toggle("select", true);
-    $("alarm-edit-hour").scrollTop = d.hour*26;
+    $("edit-hour").scrollTop = d.hour*26;
 
-    const minutes = Array.from($("alarm-edit-minute").querySelectorAll("div"));
+    const minutes = Array.from($("edit-minute").querySelectorAll("div"));
     for(let obj of minutes) {obj.classList.toggle("select", false)}
-    const minute = Array.from($("alarm-edit-minute").querySelectorAll("div"))
+    const minute = Array.from($("edit-minute").querySelectorAll("div"))
     .find(el => el.textContent.trim() == d.minute);
     minute.classList.toggle("select", true);
-    $("alarm-edit-minute").scrollTop = d.minute*26;
+    $("edit-minute").scrollTop = d.minute*26;
 
-    const ampms = Array.from($("alarm-edit-ampm").querySelectorAll("div"));
+    const ampms = Array.from($("edit-ampm").querySelectorAll("div"));
     for(let obj of ampms) {obj.classList.toggle("select", false)}
-    const ampm = Array.from($("alarm-edit-ampm").querySelectorAll("div"))
+    const ampm = Array.from($("edit-ampm").querySelectorAll("div"))
     .find(el => el.textContent.trim() == d.ampm);
     ampm.classList.toggle("select", true);
 
-    const notice = Array.from($("alarm-edit").querySelectorAll("div"))
-    .find(el => el.className == "content notice");
-    if(notice) {console.log(notice); $("alarm-edit").removeChild(notice)}
-
-    if(d.sync) {
-        let noticebox = document.createElement("div");
-        noticebox.className = "content-box";
-        let notice = document.createElement("div");
-        notice.className = "content notice";
-        let noticetxt = document.createElement("div");
-        noticetxt.className = "noticetxt";
-        noticetxt.innerHTML = "*Synced with matching reminder";
-        notice.appendChild(noticetxt);
-        noticebox.appendChild(notice);
-
-        $("alarm-edit").appendChild(noticebox);
-    }
-
-    editalarm = {
+    edittask = {
+        month: d.month,
+        day: d.day,
         hour: d.hour,
         minute: d.minute,
-        ampm: d.ampm
+        ampm: d.ampm,
+        snooze: d.snooze
     }
 
-    $("alarm-edit-confirm-btn").onclick = () => {
-        d.label = $("alarm-edit-label").value;
-        d.hour = editalarm.hour;
-        d.minute = editalarm.minute;
-        d.ampm = editalarm.ampm;
-
-        if(d.sync) {
-            const index = data.reminders.findIndex(item => item.id == d.id);
-            let r = data.reminders[index];
-            r.label = d.label;
-            r.hour = d.hour;
-            r.minute = d.minute;
-            r.ampm = d.ampm;
-        }
+    $("edit-confirm-btn").onclick = () => {
+        d.month = edittask.month;
+        d.day = edittask.day;
+        d.label = $("edit-label").value;
+        d.hour = edittask.hour;
+        d.minute = edittask.minute;
+        d.ampm = edittask.ampm;
+        d.snooze = edittask.snooze;
 
         clearPopups();
         updateScreen();
     }
 
-    $("alarm-delete-btn").onclick = () => {
-        const index = data.alarms.findIndex(item => item.id == d.id);
-        data.alarms.splice(index, 1);
+    $("delete-btn").onclick = () => {
+        const index = data.tasks.findIndex(item => item.id == d.id);
+        data.tasks.splice(index, 1);
         clearPopups();
         updateScreen();
     }

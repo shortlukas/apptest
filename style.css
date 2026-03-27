@@ -50,6 +50,7 @@ html {
     gap: 3px;
     border-radius: 20px;
     overflow: hidden;
+    position: relative;
 }
 
 .content {
@@ -67,7 +68,7 @@ html {
 
 .content.header {
     width: calc(100% - 32px);
-    height: 32px;
+    height: 28px;
     font-size: 24px;
     padding: 9px 12px 9px 20px;
 }
@@ -77,7 +78,7 @@ html {
 }
 
 #nav {
-    width: 360px;
+    width: 310px;
     height: 100px;
     border-radius: 50px;
     display: flex;
@@ -96,16 +97,19 @@ html {
 .icon-50 {
     width: 50px;
     height: 50px;
+    z-index: 300;
 }
 
 .icon-40 {
     width: 40px;
     height: 40px;
+    z-index: 300;
 }
 
 .icon-30 {
     width: 30px;
     height: 30px;
+    z-index: 300;
 }
 
 .alarm:hover {
@@ -130,7 +134,7 @@ html {
     height: 46px;
 }
 
-.reminder-desc {
+.task-desc {
     width: 109px;
     height: 46px;
     font-size: 12px;
@@ -138,12 +142,16 @@ html {
     align-items: center;
 }
 
-.reminder-alarmtxt {
+.task-alarmtxt {
     width: 100px;
     height: 14px;
     font-size: 12px;
     display: flex;
     align-items: center;
+}
+
+.task-alarmtxt.recent {
+    width: 200px!;
 }
 
 .notice {
@@ -152,7 +160,7 @@ html {
     justify-content: center;
 }
 
-.dtxt {
+.noticetxt {
     font-size: 12px;
 }
 
@@ -180,7 +188,8 @@ html {
 }
 
 .btn-container {
-    width: 100px;
+    width: auto;
+    padding-left: 40px;
     height: 40px;
     display: flex;
     align-items: center;
@@ -271,4 +280,73 @@ html {
 }
 .delete-btn {
     z-index: 300;
+}
+
+.grad {
+    z-index: 200;
+}
+
+.grad.blue::after {
+    content: "";
+    position: absolute;
+    height: 46px;
+    width: 200px;
+    margin-right: -12px;
+
+    background: linear-gradient(
+        to right,
+        rgba(36, 34, 41, 0) 0%,
+        rgba(13, 59, 102, 1) 68%
+    );
+
+    pointer-events: none; /* doesn't block clicks */
+    z-index: -1;
+}
+.grad.red::after {
+    content: "";
+    position: absolute;
+    height: 46px;
+    width: 200px;
+    margin-right: -12px;
+
+    background: linear-gradient(
+        to right,
+        rgba(36, 34, 41, 0) 40%,
+        rgba(249, 87, 56, 1) 68%
+    );
+
+    pointer-events: none; /* doesn't block clicks */
+    z-index: -1;
+}
+.grad.green::after {
+    content: "";
+    position: absolute;
+    height: 46px;
+    width: 200px;
+    margin-right: -12px;
+
+    background: linear-gradient(
+        to right,
+        rgba(36, 34, 41, 0) 40%,
+        rgba(51, 144, 37, 1) 68%
+    );
+
+    pointer-events: none; /* doesn't block clicks */
+    z-index: -1;
+}
+.grad.gray::after {
+    content: "";
+    position: absolute;
+    height: 46px;
+    width: 200px;
+    margin-right: -12px;
+
+    background: linear-gradient(
+        to right,
+        rgba(36, 34, 41, 0) 40%,
+        rgba(73, 73, 73, 1) 68%
+    );
+
+    pointer-events: none; /* doesn't block clicks */
+    z-index: -1;
 }
